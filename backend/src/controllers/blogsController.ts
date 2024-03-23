@@ -116,6 +116,17 @@ export async function getAllBlogs(c:Context){
                     mode: 'insensitive'
                 }
             },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                authorId: true,
+                author: {
+                    select: {
+                        name: true
+                    }
+                }
+            },
             orderBy: {
                 id: 'asc'
             }
