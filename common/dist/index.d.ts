@@ -27,21 +27,27 @@ export declare const updateUserSchema: zod.ZodObject<{
 }>;
 export declare const createBlogSchema: zod.ZodObject<{
     title: zod.ZodString;
+    imageLink: zod.ZodString;
     content: zod.ZodString;
 }, "strip", zod.ZodTypeAny, {
     title: string;
+    imageLink: string;
     content: string;
 }, {
     title: string;
+    imageLink: string;
     content: string;
 }>;
 export declare const updateBlogSchema: zod.ZodObject<{
     title: zod.ZodOptional<zod.ZodString>;
+    imageLink: zod.ZodString;
     content: zod.ZodOptional<zod.ZodString>;
 }, "strip", zod.ZodTypeAny, {
+    imageLink: string;
     title?: string | undefined;
     content?: string | undefined;
 }, {
+    imageLink: string;
     title?: string | undefined;
     content?: string | undefined;
 }>;

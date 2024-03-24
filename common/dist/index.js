@@ -17,9 +17,11 @@ exports.updateUserSchema = zod_1.default.object({
 });
 exports.createBlogSchema = zod_1.default.object({
     title: zod_1.default.string().min(4),
+    imageLink: zod_1.default.string().min(2),
     content: zod_1.default.string().min(20)
 });
 exports.updateBlogSchema = zod_1.default.object({
     title: zod_1.default.string().min(4).optional(),
+    imageLink: zod_1.default.string().min(2),
     content: zod_1.default.string().min(20).optional(),
 });

@@ -2,8 +2,8 @@ import { Context, Next } from "hono";
 import { Jwt } from "hono/utils/jwt";
 
 export async function authMiddleware(c:Context, next:Next){
-    const token = c.req.header("authorization") || "";     
     try {
+        const token = c.req.header("authorization") || "token";     
         if(!token || !token.startsWith("Bearer")){
             return c.body("Invalid Token",403)
         }
@@ -15,6 +15,6 @@ export async function authMiddleware(c:Context, next:Next){
         c.set("userId",verified.id)
         await next()
     } catch (error:any) {
-        return c.body(error,500)
+        return c.body(error,403)
     }
 }

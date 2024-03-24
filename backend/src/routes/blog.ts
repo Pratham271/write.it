@@ -14,4 +14,5 @@ blogsRouter.get("/blog/:id", getBlogById)
 
 
 blogsRouter.delete("/blog/delete/:id", deleteBlogById)
+// blogsRouter.delete("/deleteAll", deleteAllBlogs)
 export default blogsRouter
