@@ -16,12 +16,14 @@ export const updateUserSchema = zod.object({
 
 export const createBlogSchema = zod.object({
     title: zod.string().min(4),
+    imageLink: zod.string().min(2),
     content: zod.string().min(20)
 })
 
 
 export const updateBlogSchema = zod.object({
     title: zod.string().min(4).optional(),
+    imageLink: zod.string().min(2),
     content: zod.string().min(20).optional(),
     
 })

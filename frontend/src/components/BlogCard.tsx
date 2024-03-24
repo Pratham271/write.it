@@ -1,14 +1,18 @@
+import { Link } from "react-router-dom"
 import Avatar from "./Avatar"
 
 interface BlogCardProps{
     authorName: string,
     title: string,
     content: string,
-    publishedDate: string
+    imageLink: string
+    publishedDate: string,
+    id: string
 }
-const BlogCard = ({authorName,title,content,publishedDate}:BlogCardProps) => {
+const BlogCard = ({authorName,title,content,publishedDate,id,imageLink}:BlogCardProps) => {
   return (
-    <div className="border-b-[1px] border-gray-200 pb-4 p-4 flex justify-between">
+    <Link to={`/blog/${id}`}>
+      <div className="border-b-[1px] border-gray-200 pb-4 p-4 flex justify-between">
         <div>
         <div className="flex">
             <div className="flex justify-center flex-col">
@@ -33,9 +37,10 @@ const BlogCard = ({authorName,title,content,publishedDate}:BlogCardProps) => {
       </div>
         </div>   
         <div className="ml-9">
-            <img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*TydOjQrBvaozcclo.jpg" height={200} width={200} alt="" />
+            <img src={imageLink} height={100} width={100} alt="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*TydOjQrBvaozcclo.jpg" />
         </div>   
     </div>
+    </Link>
   )
 }
 

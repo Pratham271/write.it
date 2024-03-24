@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ce-block__content,
+    .ce-toolbar__content {
+        max-width: 1024px;
+        
+}
+.ce-block__content::selection {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+.ce-block__content::selection {
+    background: rgba(0, 0, 0, 0.1);
+  }

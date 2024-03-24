@@ -4,8 +4,8 @@ import zod from 'zod';
 import { StatusCodes } from "./userController";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { UpdateBlogInput, createBlogSchema, updateBlogSchema } from "@prathamchauhan/write.it";
-import { CreateBlogInput } from '../../../common/dist/index';
+import { UpdateBlogInput, createBlogSchema, updateBlogSchema, CreateBlogInput } from "@prathamchauhan/write.it";
+// import { CreateBlogInput } from '../../../common/dist/index';
 
 
 
@@ -25,12 +25,13 @@ export async function createBlog(c:Context){
             title: body.title,
             content: body.content,
             published: true,
+            imageLink: body.imageLink,
             authorId: c.get("userId")
         },
        })
        return c.json({
         message: "Blog created successfully",
-        newBlog
+        newBlog 
        },StatusCodes.CREATED)
     } catch (error:any) {
         return c.body(error.message, StatusCodes.SERVERERROR)
@@ -62,7 +63,8 @@ export async function updateBlog(c:Context){
             },
             data: {
                 title: body.title,
-                content: body.content
+                content: body.content,
+                
             }
         })
         return c.json({
@@ -84,6 +86,19 @@ export async function getBlogById(c:Context){
         const blog = await prisma.blog.findUnique({
             where: {
                 id: id
+            },
+            select: {
+                id: true,
+                imageLink: true,
+                title: true,
+                content: true,
+                authorId: true,
+                createdAt: true,
+                author: {
+                    select: {
+                        name: true
+                    }
+                }
             }
         })
         if(!blog){
@@ -119,8 +134,10 @@ export async function getAllBlogs(c:Context){
             select: {
                 id: true,
                 title: true,
+                imageLink: true,
                 content: true,
                 authorId: true,
+                createdAt: true,
                 author: {
                     select: {
                         name: true
@@ -151,3 +168,12 @@ export async function deleteBlogById(c:Context){
         deleteBlog
     },StatusCodes.SUCCESS)
 }
+
+// export async function deleteAllBlogs(c:Context){
+//     const prisma = new PrismaClient({
+//         datasourceUrl: c.env.DATABASE_URL
+//     }).$extends(withAccelerate()) 
+
+//     await prisma.blog.deleteMany({})
+//     return c.body("deleted all the blogs")
+// }

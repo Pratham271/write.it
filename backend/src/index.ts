@@ -8,6 +8,6 @@ const app = new Hono()
 app.use(cors())
 
 app.route("/api/v1/user", userRouter)
-app.route("/api/v1/",blogsRouter )
+app.route("/api/v1",blogsRouter )
 
 export default app

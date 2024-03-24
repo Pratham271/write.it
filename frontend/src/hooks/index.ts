@@ -2,32 +2,48 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import BASE_URL from "../config"
 
+export interface Blog{
+    "content":string,
+    "title": string,
+    "id":string,
+    "imageLink": string,
+    "authorId": string,
+    "createdAt": string
+    "author": {
+      "name": string
+    }
+  }
+  export const useBlogs = (filter: string) => {
+    const [loading, setLoading] = useState(false);
+    const [blogs, setBlogs] = useState<Blog[]>([]);
 
-export const useBlogs = () => {
-    const [loading,setLoading] = useState(false)
-    const [blogs,setBlogs] = useState([]);
-
-    useEffect(()=> {
-        setLoading(true)
-        axios.get(`http://localhost:8787/api/v1/blog/bulk`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`${BASE_URL}/blog/bulk?filter=${filter}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+                setBlogs(response.data.allBlogs);
+            } catch (error) {
+                console.log(error);
+                alert("Something went wrong");
+            } finally {
+                setLoading(false);
             }
-        })
-        .then((res)=> {
-            setBlogs(res.data)
-        })
-        .catch((e)=> {
-            console.log(e)
-            alert("Something went wrong")
-        }).finally(()=>{
-            setLoading(false)
-        })
-    },[])
+        };
+
+        const timer = setTimeout(fetchBlogs, 500);
+
+        return () => clearTimeout(timer);
+    }, [filter]);
+
     return {
         loading,
-        blogs
-    }
-
-    
-}
+        blogs,
+        setBlogs,
+        setLoading
+    };
+};

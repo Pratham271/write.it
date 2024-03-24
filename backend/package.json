@@ -4,7 +4,7 @@
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
-    "@prathamchauhan/write.it": "^1.0.0",
+    "@prathamchauhan/write.it": "^1.0.2",
     "@prisma/client": "^5.11.0",
     "@prisma/extension-accelerate": "^1.0.0",
     "crypto-js": "^4.2.0",
