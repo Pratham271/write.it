@@ -1,7 +1,7 @@
 
 
 import Avatar from './Avatar';
-
+import Markdown from 'react-markdown';
 interface blog{
     "id":string,
     "title": string,
@@ -52,10 +52,12 @@ const FullBlog = ({blog}:{blog:blog}) => {
             </div>
             <div className="flex justify-center">
                
-                <img src={blog.imageLink} alt="" height={200} width={200}/>
+                <img src={blog.imageLink} alt="" height={600} width={600}/>
             </div>
             <div className="pt-4">
+                <Markdown>
                 {blog.content}
+                </Markdown>
             </div>
         </div>
         <div className="col-span-4 hidden lg:block">

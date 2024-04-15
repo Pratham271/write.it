@@ -1,18 +1,14 @@
 import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import HandleButton from './HandleButton'
-import { useRecoilValue } from 'recoil'
-import { buttonState } from '../store/atoms/atom'
 import { useEffect, useState } from 'react'
 import { useBlogs } from '../hooks/index';
 import axios from 'axios'
 import BASE_URL from '../config'
-
-
-
+import { useLocation } from 'react-router-dom'
 
 const Appbar = ({onClick, name}:{name:string,onClick:()=> void}) => {
-  const button = useRecoilValue(buttonState)
+  const location = useLocation();
   return (
     <div className="border-b flex justify-between px-2 lg:px-10 py-4">
         <div className="flex">
@@ -21,7 +17,7 @@ const Appbar = ({onClick, name}:{name:string,onClick:()=> void}) => {
               <img src={'../../public/logo.png'} alt="logo" height={40} width={40}/>
             </Link>
             </div>
-            {button===false?<div className="ml-2 lg:ml-6 flex justify-center flex-col">
+            {location.pathname!=='/publish'?<div className="ml-2 lg:ml-6 flex justify-center flex-col">
               <Searchbar/>
             </div>:null}
         </div>
