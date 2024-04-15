@@ -1,12 +1,22 @@
 import { Context } from "hono";
 import zod from 'zod';
-
+import { ChatGroq } from "@langchain/groq";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
 import { StatusCodes } from "./userController";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { UpdateBlogInput, createBlogSchema, updateBlogSchema, CreateBlogInput } from "@prathamchauhan/write.it";
 // import { CreateBlogInput } from '../../../common/dist/index';
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { CohereEmbeddings } from "@langchain/cohere";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { createRetrievalChain } from "langchain/chains/retrieval";
+import { Document } from "@langchain/core/documents";
 
+const loader = new CheerioWebBaseLoader("https://medium.com");
+const splitter = new RecursiveCharacterTextSplitter();
 
 
 export async function createBlog(c:Context){
@@ -36,6 +46,63 @@ export async function createBlog(c:Context){
     } catch (error:any) {
         return c.body(error.message, StatusCodes.SERVERERROR)
     }
+}
+
+export async function createBlogWithAI(c:Context){
+    const model = new ChatGroq({
+        apiKey: c.env.GROQ_API_KEY,
+      });
+    const embeddings = new CohereEmbeddings({
+        apiKey: c.env.COHERE_API_KEY,
+    });
+    // const prompt = ChatPromptTemplate.fromMessages([
+    //     ["system", "You are a brilliant blog writer and you only right in paragraphs with p tag"],
+    //     ["human", "{input}"],
+    // ]);
+    const prompt =
+  ChatPromptTemplate.fromTemplate(`You are a brilliant blog writer and you are not friendly just here to do your job now write a blog based only on the provided context:
+    <context>
+    {context}
+    </context>
+    Question: {input}`
+    );
+    const body = await c.req.json()
+    const userInput = body.input;
+    if(!userInput.includes("blog") || !userInput.includes("title")){
+        return c.json({
+            errorMessage: "Please provide complete context"
+        },StatusCodes.WRONGINPUTS)
+    }
+    const docs = await loader.load();
+    const splitDocs = await splitter.splitDocuments(docs);
+    const vectorstore = await MemoryVectorStore.fromDocuments(
+        splitDocs,
+        embeddings
+    );
+    const documentChain = await createStuffDocumentsChain({
+        llm: model,
+        prompt,
+      });
+    await documentChain.invoke({
+        input: userInput,
+        context: [
+          new Document({
+            pageContent:
+              "Write blogs with title and content",
+          }),
+        ],
+    });
+    const retriever = vectorstore.asRetriever();
+    const retrievalChain = await createRetrievalChain({
+        combineDocsChain: documentChain,
+        retriever,
+      });
+    const result = await retrievalChain.invoke({
+        input: userInput,
+    });
+    return c.json({
+        output: result.answer
+    },StatusCodes.SUCCESS)
 }
 
 export async function updateBlog(c:Context){

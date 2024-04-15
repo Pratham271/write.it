@@ -47,7 +47,7 @@ export const blogAtomFamily = atomFamily({
 //     }
 // });
 
-export const buttonState = atom({
-    key: "buttonState",
-    default: false
+export const inputAtom = atom({
+    key: "inputAtom",
+    default: ""
 })
