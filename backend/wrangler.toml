@@ -6,6 +6,7 @@ DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsI
 JWT_SECRET = "mediumAppSecret"
 COHERE_API_KEY="7PimmkFD3exInlcfRMlNgmxikskwtAv0HifDnFIY"
 GROQ_API_KEY="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"
+BRAVE_API_KEY = "BSAQXBBMg_02Nft1HrJIVGAAHhZ17wd"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"

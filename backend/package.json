@@ -9,6 +9,7 @@
     "@prathamchauhan/write.it": "^1.0.2",
     "@prisma/client": "^5.11.0",
     "@prisma/extension-accelerate": "^1.0.0",
+    "axios": "^1.6.8",
     "cheerio": "^1.0.0-rc.12",
     "crypto-js": "^4.2.0",
     "hono": "^4.1.3",

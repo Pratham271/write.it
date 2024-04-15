@@ -6,17 +6,19 @@ import { useNavigate } from "react-router-dom"
 import Modal from "../components/Modal"
 import { useRecoilValue } from "recoil"
 import { inputAtom } from "../store/atoms/atom"
+import Spinner from "../components/Spinner"
 
 
 const Publish = () => {  
   let aiContent:string="";
-  let aiTitle:string="";
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [imageLink, setImageLink] = useState("")
   const [name,setName] = useState<string>("")
   const [modal, setModal] = useState(false)
+  const [loading,setLoading] = useState(false)
   const input = useRecoilValue(inputAtom)
+
   const modalRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   useEffect(()=> {
@@ -70,6 +72,7 @@ const Publish = () => {
   async function getAIBlog(e:any){
     e.preventDefault()
     setModal(false)
+    setLoading(true)
     try {
       const response = await axios.post(`${BASE_URL}/blog/create/ai`, {
         input: input
@@ -82,25 +85,29 @@ const Publish = () => {
       console.log(response.data)
       const splitResponse = response.data.output.split("\n\n")
       // Extracting title and content
-      if(splitResponse[0].includes("Sure") || splitResponse[0].includes("here is a blog")){
-        aiTitle = splitResponse[1].replace('Title: ', '');
+      if(splitResponse[0].includes("Sure") || splitResponse[0].includes("here is a blog") ){
         aiContent = splitResponse.slice(2).join('\n\n');
+        setContent(aiContent)
+      }
+      else if(splitResponse[0].length<100){
+        aiContent = splitResponse.slice(1).join('\n\n');
+        setContent(aiContent)
       }
       else{
-        aiTitle = splitResponse[0].replace('Title: ', '');
-        aiContent = splitResponse.slice(1).join('\n\n');
+        setContent(response.data.output)
       }
-      setTitle(aiTitle)
-      setContent(aiContent)
-      console.log("Title:", aiTitle);
-      console.log("Content:", aiContent);
+      setTitle(response.data.title)
+      setImageLink(response.data.imageLink.link)
 
     } catch (error) {
       alert("Invalid Inputs, please provide right context, check the placeholder ")
+    }finally{
+      setLoading(false)
     }
   }
   return (
     <div>
+      {loading && <div className="fixed left-[800px] pt-28"><Spinner/></div>}
         <div className={`${modal?"bg-black opacity-20":"opacity-100"}`}>
         <Appbar onClick={PublishBlog} name={name}/>
         
@@ -109,10 +116,10 @@ const Publish = () => {
             <input value={title} type="text" onChange={(e)=> setTitle(e.target.value)} id="default-input" className={`${modal?"bg-black opacity-50":"bg-white opacity-100"}  text-gray-900  rounded-lg focus:outline-none block w-full  p-2.5 text-3xl`} placeholder="Title"/>
             </div>
             <div className="flex justify-center max-w-screen-lg w-full mx-auto">
-            <input type="text" id="default-input" onChange={(e)=> setImageLink(e.target.value)} className={`${modal?"bg-black opacity-50":"opacity-100 bg-white"}  text-gray-900  rounded-lg focus:outline-none block w-full p-2.5 text-md`} placeholder="Blog image link"/>
+            <input value={imageLink} type="text" id="default-input" onChange={(e)=> setImageLink(e.target.value)} className={`${modal?"bg-black opacity-50":"opacity-100 bg-white"}  text-gray-900  rounded-lg focus:outline-none block w-full p-2.5 text-md`} placeholder="Blog image link"/>
             </div>
             <div className="flex justify-center max-w-screen-lg w-full mx-auto">
-            <button className={`absolute left-80 mt-1.5 ${modal?"bg-black opacity-50":"opacity-100"}`} onClick={()=> setModal(true)}>
+            <button disabled={loading} className={`absolute left-80 mt-1.5 ${modal?"bg-black opacity-50":"opacity-100"}`} onClick={()=> setModal(true)}>
               <img src="./AI.png" alt="" width={28} height={28} className={`${modal?"bg-black opacity-50":"opacity-100"}`}/>
             </button>
             <textarea value={content} disabled={modal} id="message" onChange={(e)=> setContent(e.target.value)} rows={15} className={`${modal?"bg-black opacity-50":"bg-white opacity-100"}block p-2.5 w-full text-sm text-gray-900  rounded-lg focus:outline-none h-[780px]`} placeholder="Write your thoughts here..."></textarea>

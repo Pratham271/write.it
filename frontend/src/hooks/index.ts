@@ -26,6 +26,10 @@ export interface Blog{
                         Authorization: `Bearer ${localStorage.getItem("token")}`
                     }
                 });
+                const sortedBlogs = response.data.allBlogs.sort((a: Blog, b: Blog) => {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                  });
+                console.log(sortedBlogs)
                 setBlogs(response.data.allBlogs);
             } catch (error) {
                 console.log(error);

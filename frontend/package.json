@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@prathamchauhan/write.it": "^1.0.0",
+    "@react-email/render": "^0.0.12",
     "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "mailersend": "^2.2.0",
+    "postmark": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^9.0.1",
@@ -20,6 +24,7 @@
     "recoil": "^0.7.7"
   },
   "devDependencies": {
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
