@@ -14,6 +14,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { createRetrievalChain } from "langchain/chains/retrieval";
 import { Document } from "@langchain/core/documents";
+import { fetchLinks, ImageLink, titleGenerator } from "../helpers/FetchLinks";
 
 const loader = new CheerioWebBaseLoader("https://medium.com");
 const splitter = new RecursiveCharacterTextSplitter();
@@ -68,17 +69,18 @@ export async function createBlogWithAI(c:Context){
     );
     const body = await c.req.json()
     const userInput = body.input;
-    if(!userInput.includes("blog") || !userInput.includes("title")){
+    if(!userInput.includes("blog")){
         return c.json({
             errorMessage: "Please provide complete context"
         },StatusCodes.WRONGINPUTS)
     }
     const docs = await loader.load();
     const splitDocs = await splitter.splitDocuments(docs);
-    const vectorstore = await MemoryVectorStore.fromDocuments(
-        splitDocs,
-        embeddings
-    );
+    // const vectorstore = await MemoryVectorStore.fromDocuments(
+    //     splitDocs,
+    //     embeddings
+    // );
+    let vectorstore =  await fetchLinks(c,userInput)
     const documentChain = await createStuffDocumentsChain({
         llm: model,
         prompt,
@@ -92,7 +94,20 @@ export async function createBlogWithAI(c:Context){
           }),
         ],
     });
-    const retriever = vectorstore.asRetriever();
+    
+    // console.log(vectorstore)
+    let retriever;
+    if(vectorstore){
+        // @ts-ignore
+        retriever = vectorstore.asRetriever();
+    }
+    else{
+        vectorstore = await MemoryVectorStore.fromDocuments(
+                splitDocs,
+                embeddings
+            );
+        retriever = vectorstore.asRetriever();
+    }
     const retrievalChain = await createRetrievalChain({
         combineDocsChain: documentChain,
         retriever,
@@ -100,8 +115,12 @@ export async function createBlogWithAI(c:Context){
     const result = await retrievalChain.invoke({
         input: userInput,
     });
+    const title = await titleGenerator(c,result.answer)
+    const imageLink = await ImageLink(c,userInput)
     return c.json({
-        output: result.answer
+        output: result.answer,
+        title: title,
+        imageLink: imageLink
     },StatusCodes.SUCCESS)
 }
 
@@ -235,6 +254,8 @@ export async function deleteBlogById(c:Context){
         deleteBlog
     },StatusCodes.SUCCESS)
 }
+
+
 
 // export async function deleteAllBlogs(c:Context){
 //     const prisma = new PrismaClient({
