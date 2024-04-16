@@ -5,10 +5,8 @@ import zod from 'zod';
 import crypto from 'crypto-js'
 
 import { Jwt } from "hono/utils/jwt";
-import { SigninInput, SignupInput, UpdateUserInput } from '../../../common/dist/index';
+import { SigninInput, SignupInput, UpdateUserInput } from '@prathamchauhan/write.it';
 import { signupSchema } from "@prathamchauhan/write.it";
-
-
 
 
 
@@ -21,7 +19,7 @@ export const enum StatusCodes{
     WRONGINPUTS = 422,
     SERVERERROR = 500
 }
-
+let otp:string;
 export async function signup(c:Context){
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL
@@ -85,6 +83,81 @@ export async function signin(c:Context){
     }
 }
 
+// export async function verifyOTP(c:Context){
+//     otp = Math.random().toString(36).substring(2, 8).toUpperCase();  
+//     const secret = c.req.header("secret")
+    
+//     try {
+//         if(secret!==c.env.Secret){
+//             return c.json({
+//                 message: "Invalid Request"
+//             },StatusCodes.FORBIDDEN)
+//         }
+//         const body:{email:string} = await c.req.json()
+//         const resend = new Resend(c.env.RESEND_API_KEY);
+//         const { data, error } = await resend.emails.send({
+//             from: 'Acme <onboarding@resend.dev>',
+//             to: ['pratham19csu221@ncuindia.edu'],
+//             subject: 'Hello World',
+//             html: `<html>
+//             <head>
+//             <style>
+//             /* Define your CSS styles here */
+//             body {
+//                 font-family: Arial, sans-serif;
+//                 text-align: center;
+//                 align-items: center;
+                
+//             }
+//             h1 {
+//                 color: #0066cc;
+//             }
+//             .otp {
+//                 background-color: lightgray;
+//                 padding: 3px;
+//                 color: black;
+//                 height: 80px;
+//                 width: 80px;
+//                 display: flex;
+//                 flex-direction:column;
+//                 justify-content: center;
+//                 justify-self: center;
+//                 justify-items: center;
+//                 align-items: center;
+//                 padding-left:40px;
+//                 padding-top:50px;
+//             }
+//             p {
+//                 font-size: 16px;
+//             }
+//             /* Add more styles as needed */
+//         </style>
+//             </head>
+//             <body>
+//             <center><h1>Write.it</h1>
+//             <strong>Pleased to meet you</strong>
+//             <br><br>
+//             <p>Thanks for using Write.it, your personal AI blog writer! To help us ensure it's really you, here's the verification code you'll need to sign up:</p>
+//             <br><br>
+//             <div class="otp"><strong>${otp}</strong></div></center>
+//             </body>
+//         </html>`,
+//           });
+        
+//           if (error) {
+//             return console.error({ error });
+//           }
+        
+//           console.log({ data });
+//           return c.json({
+//             message: "Email sent successfully"
+//           })
+//     } catch (error) {
+//         return c.json({
+//             errorMessage: error
+//         })
+//     }
+// }
 export async function getAllUsers(c:Context){
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL

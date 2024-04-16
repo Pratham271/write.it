@@ -5,13 +5,11 @@ import Button from './Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Spinner from './Spinner';
-import EmailOtp from './EmailOtp';
-import { render } from '@react-email/render';
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+// import EmailOtp from './EmailOtp';
+import BASE_URL from '../config';
 
-const mailerSend = new MailerSend({
-    apiKey: process.env.MAILERSEND_API_KEY || '',
-  });
+
+
 const SignupInputs = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +21,7 @@ const SignupInputs = () => {
     async function handleSignup(){
         try {
             setIsLoading(true);
-            const res = await axios.post("http://localhost:8787/api/v1/user/signup", {
+            const res = await axios.post(`${BASE_URL}/user/signup`, {
             name: postInputs.name,
             email: postInputs.email,
             password: postInputs.password
@@ -42,21 +40,24 @@ const SignupInputs = () => {
         }
     }
 
-   function sendOtp(){
-        const otp = Math.random().toString(36).substring(2, 8).toUpperCase();  
-        const emailHtml = render(<span>OTP: <strong></strong>{otp}</span>);
-        const sentFrom = new Sender("Write.it@trial-pxkjn41x3mqgz781.mlsender.net", "Admin");
-        const recipients = [
-            new Recipient("chauhanpratham22@gmail.com", "Your Client")
-        ];
-        const emailParams = new EmailParams()
-        .setFrom(sentFrom)
-        .setTo(recipients)
-        .setSubject("OTP")
-        .setHtml(emailHtml)
-
-        mailerSend.email.send(emailParams);
-   }
+//    async function sendOtp(){
+//        try {
+//         const response = await axios.post(`${BASE_URL}/user/otp`,{
+//             email: postInputs.email,
+//         },
+//         {
+//             headers: {
+//                 secret: process.env.REACT_APP_SECRET
+//             }
+//         }
+//         )
+//         if(response.status!==200){
+//             alert("Error while signing up")
+//         }
+//        } catch (error) {
+//             console.log(error)
+//        }
+//    }
   return (
     <div>
         <div>
@@ -69,13 +70,18 @@ const SignupInputs = () => {
                    
         </div>
         <div className='relative'>
-            {/* <InputBox label="Email" placeholder="johndoe@gmail.com" onChange={(e:any)=> {
+            <InputBox label="Email" placeholder="johndoe@gmail.com" onChange={(e:any)=> {
                 setPostInputs(c => ({
                     ...c,
                     email: e.target.value
                 }))
-            }}/> */}
-            <EmailOtp onClick={sendOtp}/>
+            }}/>
+            {/* <EmailOtp onChange={(e:any)=> {
+                        setPostInputs(c => ({
+                            ...c,
+                            email: e.target.value
+                        }))
+            }} onClick={sendOtp}/> */}
         </div>
         <div>
             <InputBox label="password" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" type="password" onChange={(e:any)=> {
