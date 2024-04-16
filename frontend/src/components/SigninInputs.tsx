@@ -5,6 +5,7 @@ import Button from './Button';
 import axios from 'axios';
 import Spinner from './Spinner';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const SigninInputs = () => {
     const navigate = useNavigate()
@@ -17,7 +18,7 @@ const SigninInputs = () => {
     async function handleSignin(){
         try {
             setIsLoading(true);
-        const res = await axios.post("http://localhost:8787/api/v1/user/signin",{
+        const res = await axios.post(`${BASE_URL}/user/signin`,{
             email: postInputs.email,
             password: postInputs.password
         })

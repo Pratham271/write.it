@@ -15,5 +15,6 @@ userRouter.put("/update", authMiddleware,updateUser)
 userRouter.delete("/delete", authMiddleware, deleteUser)
 
 userRouter.get("/me",authMiddleware,getMe)
+// userRouter.get("/otp",verifyOTP)
 
 export default userRouter
