@@ -13,7 +13,7 @@ blogsRouter.get("/blog/bulk", getAllBlogs)
 blogsRouter.get("/blog/:id", getBlogById)
 
 
-blogsRouter.delete("/blog/delete/:id", deleteBlogById)
+// blogsRouter.delete("/blog/delete/:id", deleteBlogById)
 
 blogsRouter.post("/blog/create/ai",authMiddleware,createBlogWithAI)
 // blogsRouter.delete("/deleteAll", deleteAllBlogs)
