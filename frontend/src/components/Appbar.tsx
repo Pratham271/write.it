@@ -14,7 +14,7 @@ const Appbar = ({onClick, name}:{name:string,onClick:()=> void}) => {
         <div className="flex">
             <div className="flex justify-center flex-col">
             <Link to={'/allblogs'}>
-              <img src={'../../public/logo.png'} alt="logo" height={40} width={40}/>
+              <img src={'favicon.ico'} alt="logo" height={40} width={40}/>
             </Link>
             </div>
             {location.pathname!=='/publish'?<div className="ml-2 lg:ml-6 flex justify-center flex-col">
